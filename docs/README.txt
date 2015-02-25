@@ -1,0 +1,1 @@
+The directory "docs" will contain documentation files with description of the project source code and how to use created library in own projects and more.

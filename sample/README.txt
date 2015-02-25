@@ -1,0 +1,1 @@
+The directory "sample" will contain a short example of use this java library.
