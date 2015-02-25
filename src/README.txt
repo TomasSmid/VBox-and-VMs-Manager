@@ -1,1 +1,0 @@
-The directory "src" will contain the source code of this java project.
