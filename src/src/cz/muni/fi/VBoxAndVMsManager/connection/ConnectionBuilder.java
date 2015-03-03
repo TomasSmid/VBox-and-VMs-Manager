@@ -44,7 +44,7 @@ public final class ConnectionBuilder {
             System.err.println("Connection failed:");
             System.err.println(ex.getMessage());
             System.err.println("Check, whether used IP address, VirtualBox " +
-                               "web server port,username and user password" +
+                               "web server port,username and user password " +
                                "are correct and whether there is VBox" +
                                "webserver running on a machine you " +
                                "want to connect.");

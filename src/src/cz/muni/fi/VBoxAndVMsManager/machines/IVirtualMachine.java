@@ -47,15 +47,17 @@ public interface IVirtualMachine {
     
     public Long getSizeOfRAM();
     
+    public String getState();
+    
     public String getTypeOfOS();
     
-    public Long getVideoMemorySize();
-    
-    public void shutDown();
+    public Long getVideoMemorySize(); 
     
     public void removeAllOwnPortRules();
     
     public void removeOneOwnPortRule(String ruleName);
+    
+    public void shutDown();
     
     public void start();
     

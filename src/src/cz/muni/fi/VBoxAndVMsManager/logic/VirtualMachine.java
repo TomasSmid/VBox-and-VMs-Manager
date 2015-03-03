@@ -24,16 +24,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.virtualbox_4_3.IConsole;
+import org.virtualbox_4_3.IEvent;
 import org.virtualbox_4_3.IMachine;
 import org.virtualbox_4_3.IMedium;
 import org.virtualbox_4_3.INATEngine;
 import org.virtualbox_4_3.INetworkAdapter;
+import org.virtualbox_4_3.IPCIDeviceAttachment;
 import org.virtualbox_4_3.IProgress;
 import org.virtualbox_4_3.ISession;
 import org.virtualbox_4_3.IVirtualBox;
 import org.virtualbox_4_3.LockType;
 import org.virtualbox_4_3.MachineState;
 import org.virtualbox_4_3.NATProtocol;
+import org.virtualbox_4_3.SessionState;
 import org.virtualbox_4_3.VBoxException;
 import org.virtualbox_4_3.VirtualBoxManager;
 
@@ -101,7 +104,8 @@ final class VirtualMachine implements IVirtualMachine, Comparable<IVirtualMachin
     @Override
     public void addPortRule(String ruleName, Protocol protocol, int hostPort,
                             int guestPort) {
-        INetworkAdapter adapter = guestMachine.getNetworkAdapter(1L);
+        //Long slot = new Long(0);
+        INetworkAdapter adapter = guestMachine.getNetworkAdapter(0L);
         INATEngine natEngine = adapter.getNATEngine();
         NATProtocol natp = (protocol == Protocol.TCP) ? NATProtocol.TCP : 
                                                         NATProtocol.UDP;        
@@ -191,6 +195,11 @@ final class VirtualMachine implements IVirtualMachine, Comparable<IVirtualMachin
     public Long getSizeOfRAM() {
         return guestMachine.getMemorySize();
     }
+    
+    @Override
+    public String getState(){
+        return guestMachine.getState().toString();
+    }
 
     @Override
     public String getTypeOfOS() {
@@ -200,31 +209,11 @@ final class VirtualMachine implements IVirtualMachine, Comparable<IVirtualMachin
     @Override
     public Long getVideoMemorySize() {
         return guestMachine.getVRAMSize();
-    }
-
-    @Override
-    public void shutDown() {        
-        MachineState ms = guestMachine.getState();
-        if(ms != MachineState.PoweredOff && ms != MachineState.Aborted
-                && ms != MachineState.Stuck){
-            guestMachine.lockMachine(session, LockType.Shared);
-            System.out.println("Shutting down the virtual machine " +  vmName);
-            IConsole console = session.getConsole();
-            IProgress progress = console.powerDown();
-            progressBar(progress,10000);
-            ms = guestMachine.getState();
-            System.out.println(vmName + " is " + ms.toString());
-            session.unlockMachine();            
-        }else{
-            System.err.println("Virtual machine " + vmName + " cannot be " +
-                               "shutted down, because it is in a state, which " +
-                               "indicates the machine is already powered off.");
-        }
-    }
+    }    
 
     @Override
     public void removeAllOwnPortRules() {
-        INetworkAdapter adapter = guestMachine.getNetworkAdapter(1L);
+        INetworkAdapter adapter = guestMachine.getNetworkAdapter(0L);
         INATEngine natEngine = adapter.getNATEngine();
         
         System.out.println("Removing all port forwarding rules");
@@ -238,7 +227,7 @@ final class VirtualMachine implements IVirtualMachine, Comparable<IVirtualMachin
 
     @Override
     public void removeOneOwnPortRule(String ruleName) {
-        INetworkAdapter adapter = guestMachine.getNetworkAdapter(1L);
+        INetworkAdapter adapter = guestMachine.getNetworkAdapter(0L);
         INATEngine natEngine = adapter.getNATEngine();
         PortRule ruleToRem = null;
         
@@ -260,6 +249,29 @@ final class VirtualMachine implements IVirtualMachine, Comparable<IVirtualMachin
                                "does not exist.");
         }
         
+    }
+    
+    @Override
+    public void shutDown() {
+        guestMachine.lockMachine(session, LockType.Shared);
+        //System.out.println("Machine is locked");
+        MachineState ms = guestMachine.getState();
+        if(ms == MachineState.Running || ms == MachineState.Paused ||
+                ms == MachineState.Stuck){            
+            System.out.println("Shutting down the virtual machine " +  vmName);
+            IConsole console = session.getConsole();
+            IProgress progress = console.powerDown();
+            progressBar(progress,20000);
+            ms = guestMachine.getState();
+            System.out.println(vmName + " is " + ms.toString());
+        }else{
+            System.err.println("Virtual machine " + vmName + " cannot be " +
+                               "shutted down, because it is not in required " +
+                               "state (Running, Paused, Stuck) -> virtual " +
+                               "machine is now in state \"" + ms + "\"");
+        }
+        if(guestMachine.getSessionState() == SessionState.Locked)            
+            session.unlockMachine();
     }
 
     @Override
@@ -291,9 +303,11 @@ final class VirtualMachine implements IVirtualMachine, Comparable<IVirtualMachin
             System.out.println("Starting the virtual machine " + vmName);
             IProgress progress = guestMachine.launchVMProcess(session, "gui", "");
             progressBar(progress,10000);
-            ms = guestMachine.getState();
+            ms = guestMachine.getState();                       
             System.out.println(vmName + " is " + ms.toString());
-            session.unlockMachine();            
+            session.unlockMachine();  
+            
+            
         }catch(VBoxException ex){
             System.err.println("Starting the virtual machine " + vmName +
                                " was interrupted.");
@@ -301,7 +315,7 @@ final class VirtualMachine implements IVirtualMachine, Comparable<IVirtualMachin
             if(ex.toString().contains("is already locked by a session " +
                                       "(or being locked or unlocked)")){
                 System.out.println("Try to restart the web server on the " +
-                                   "host machine " + hostMachine);
+                                   "host machine \"" + hostMachine.getAddressIP() + "\"");
             }
         }
     }
@@ -377,7 +391,7 @@ final class VirtualMachine implements IVirtualMachine, Comparable<IVirtualMachin
     }
     
     private Collection<PortRule> getNATPortRules(){
-        INetworkAdapter adapter = guestMachine.getNetworkAdapter(1L);
+        INetworkAdapter adapter = guestMachine.getNetworkAdapter(0L);
         INATEngine natEngine = adapter.getNATEngine();
         Collection<PortRule> rulesToRet = new ArrayList<>();
         

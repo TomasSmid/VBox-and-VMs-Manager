@@ -22,10 +22,8 @@ import cz.muni.fi.VBoxAndVMsManager.machines.PhysicalMachine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.virtualbox_4_3.IMachine;
 import org.virtualbox_4_3.IVirtualBox;
 import org.virtualbox_4_3.VirtualBoxManager;
@@ -62,6 +60,25 @@ public class VirtualMachinesManager {
             if(physicalMachines != null){
                 connectTo(physicalMachines);
             }
+        }
+    }
+    
+    public void close(){
+        if(!machinesAndVBoxManager.isEmpty()){
+            for(PhysicalMachine pm : machinesAndVBoxManager.keySet()){                
+                System.out.println("Terminating work with all virtual " +
+                                   "machines on physical machine \"" + 
+                                   pm.getAddressIP() + "\" and disconnecting from");
+                MansAndVMsContainer container = machinesAndVBoxManager.get(pm);
+                if(container != null)
+                    terminateWorkWithVMsOn(container);
+                else
+                    System.out.println("\"c\" is empty");
+                disconnect(machinesAndVBoxManager.get(pm));   
+            }
+            machinesAndVBoxManager.clear();
+            System.out.println("All virtual machines and VirtualBox managers " +
+                               "were terminated successfully");
         }
     }
     
@@ -128,10 +145,10 @@ public class VirtualMachinesManager {
     public IVirtualMachine getVirtualMachineInstance(PhysicalMachine physicalMachine,
                                                      String virtualMachineName){
         IVirtualMachine virtualMachine = null;
-        MansAndVMsContainer container = this.machinesAndVBoxManager.get(physicalMachine);
+        MansAndVMsContainer container = machinesAndVBoxManager.get(physicalMachine);
         if(container != null){
-            Set<IVirtualMachine> instMachines = 
-                    new HashSet<>(container.getVirtualMachines());
+            Collection<IVirtualMachine> instMachines = 
+                                    container.getVirtualMachines();
             
             for(IVirtualMachine vm : instMachines){
                 if(virtualMachineName.equals(vm.getName())) return null;
@@ -140,6 +157,7 @@ public class VirtualMachinesManager {
             virtualMachine = new VirtualMachine(physicalMachine,
                                                 container.getVirtualBoxManager(),
                                                 virtualMachineName);
+            machinesAndVBoxManager.get(physicalMachine).addVirtualMachine(virtualMachine);
         }        
         
         return virtualMachine;
@@ -156,5 +174,24 @@ public class VirtualMachinesManager {
             }
         }  
         return images;
+    }
+    
+    private void terminateWorkWithVMsOn(MansAndVMsContainer container){
+        Collection<IVirtualMachine> virtualMachines = container.getVirtualMachines();
+        
+        if(virtualMachines != null && !virtualMachines.isEmpty()){
+            for(IVirtualMachine vm : virtualMachines){
+                if (vm != null){
+                    if(vm.getState().equals("Running") || vm.getState().equals("Paused") ||
+                       vm.getState().equals("Stuck")){
+                        vm.shutDown();             
+                    }
+                }
+            }
+        }        
+    }
+    
+    private void disconnect(MansAndVMsContainer container){
+        container.getVirtualBoxManager().disconnect();
     }
 }
