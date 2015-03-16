@@ -17,7 +17,7 @@ package cz.muni.fi.vboxvmsmanager.logicimpl;
 
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.PhysicalMachine;
 import cz.muni.fi.vboxvmsmanager.pubapi.managers.ConnectionManager;
-import cz.muni.fi.vboxvmsmanager.pubapi.managers.VBoxManager;
+import cz.muni.fi.vboxvmsmanager.pubapi.managers.VirtualizationToolManager;
 
 /**
  *
@@ -26,7 +26,7 @@ import cz.muni.fi.vboxvmsmanager.pubapi.managers.VBoxManager;
 public class ConnectionManagerImpl implements ConnectionManager{
 
     @Override
-    public VBoxManager connectTo(PhysicalMachine physicalMachine) {
+    public VirtualizationToolManager connectTo(PhysicalMachine physicalMachine) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

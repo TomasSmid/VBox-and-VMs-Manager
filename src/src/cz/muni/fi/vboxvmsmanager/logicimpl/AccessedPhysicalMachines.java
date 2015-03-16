@@ -25,19 +25,36 @@ import java.util.List;
  */
 public class AccessedPhysicalMachines {
     
+    private static final AccessedPhysicalMachines INSTANCE = new AccessedPhysicalMachines();
     private static List<PhysicalMachine> accessedPhysicalMachines = new ArrayList<>();
     
-    public static void add(PhysicalMachine physicalMachine){
+    public static AccessedPhysicalMachines getInstance(){
+        return INSTANCE;
+    }
+    
+    private static void addAPM(PhysicalMachine physicalMachine){
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public static void remove(PhysicalMachine physicalMachine){
+    private static boolean removeAPM(PhysicalMachine physicalMachine){
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public static boolean isAccessed(PhysicalMachine physicalMachine){
+    private static boolean isAccessedPM(PhysicalMachine physicalMachine){
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    private AccessedPhysicalMachines(){ } //In order to prohibit instantiating of this class
+    private AccessedPhysicalMachines(){ }
+    
+    public void add(PhysicalMachine physicalMachine){
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public boolean remove(PhysicalMachine physicalMachine){
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public boolean isAccessed(PhysicalMachine physicalMachine){
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

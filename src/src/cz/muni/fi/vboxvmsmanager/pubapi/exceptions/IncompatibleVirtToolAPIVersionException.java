@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.muni.fi.vboxvmsmanager.pubapi.managers;
-
-import cz.muni.fi.vboxvmsmanager.pubapi.entities.PhysicalMachine;
+package cz.muni.fi.vboxvmsmanager.pubapi.exceptions;
 
 /**
  *
  * @author Tomáš Šmíd
  */
-public interface ConnectionManager {
+public class IncompatibleVirtToolAPIVersionException extends Exception{
     
-    public VirtualizationToolManager connectTo(PhysicalMachine physicalMachine);
+    public IncompatibleVirtToolAPIVersionException(String msg){
+        super(msg);
+    }
     
-    public void disconnectFrom(PhysicalMachine physicalMachine);
+    public IncompatibleVirtToolAPIVersionException(Throwable cause){
+        super(cause);
+    }
     
-    public void close();
+    public IncompatibleVirtToolAPIVersionException(String msg, Throwable cause){
+        super(msg,cause);
+    }
 }

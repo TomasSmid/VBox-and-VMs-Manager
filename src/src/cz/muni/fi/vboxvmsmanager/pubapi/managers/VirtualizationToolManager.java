@@ -15,28 +15,23 @@
  */
 package cz.muni.fi.vboxvmsmanager.pubapi.managers;
 
-import cz.muni.fi.vboxvmsmanager.pubapi.entities.PortRule;
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.VirtualMachine;
+import cz.muni.fi.vboxvmsmanager.pubapi.types.CloneType;
 import java.util.List;
 
 /**
  *
  * @author Tomáš Šmíd
  */
-public interface VirtualMachineManager {
+public interface VirtualizationToolManager {
     
-    public void startVM(VirtualMachine virtualMachine);
+    public VirtualMachine findVirtualMachineById(Long id);
     
-    public void shutDownVM(VirtualMachine virtualMachine);
+    public VirtualMachine findVirtualMachineByName(String name);
     
-    public void addPortRule(VirtualMachine virtualMachine, PortRule rule);
+    public List<VirtualMachine> getVirtualMachines();
     
-    public void deletePortRule(VirtualMachine virtualMachine, PortRule rule);
+    public void removeVirtualMachine(VirtualMachine virtualMachine);
     
-    public void deleteAllPortRules(VirtualMachine virtualMachine);
-    
-    public List<PortRule> getPortRules(VirtualMachine virtualMachine);
-    
-    public String getVMState(VirtualMachine virtualMachine);
-    
+    public VirtualMachine cloneVirtualMachine(VirtualMachine virtualMachine, CloneType type);
 }

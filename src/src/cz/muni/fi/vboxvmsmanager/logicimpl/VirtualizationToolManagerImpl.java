@@ -15,49 +15,46 @@
  */
 package cz.muni.fi.vboxvmsmanager.logicimpl;
 
-import cz.muni.fi.vboxvmsmanager.pubapi.entities.PortRule;
+import cz.muni.fi.vboxvmsmanager.pubapi.entities.PhysicalMachine;
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.VirtualMachine;
-import cz.muni.fi.vboxvmsmanager.pubapi.managers.VirtualMachineManager;
+import cz.muni.fi.vboxvmsmanager.pubapi.managers.VirtualizationToolManager;
+import cz.muni.fi.vboxvmsmanager.pubapi.types.CloneType;
 import java.util.List;
 
 /**
  *
  * @author Tomáš Šmíd
  */
-public class VirtualMachineManagerImpl implements VirtualMachineManager{
-
+public class VirtualizationToolManagerImpl implements VirtualizationToolManager{
+    
+    private PhysicalMachine hostMachine;
+    
+    public VirtualizationToolManagerImpl(PhysicalMachine hostMachine){
+        this.hostMachine = hostMachine;
+    }
+    
     @Override
-    public void startVM(VirtualMachine virtualMachine) {
+    public VirtualMachine findVirtualMachineById(Long id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void shutDownVM(VirtualMachine virtualMachine) {
+    public VirtualMachine findVirtualMachineByName(String name) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void addPortRule(VirtualMachine virtualMachine, PortRule rule) {
+    public List<VirtualMachine> getVirtualMachines() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void deletePortRule(VirtualMachine virtualMachine, PortRule rule) {
+    public void removeVirtualMachine(VirtualMachine virtualMachine) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void deleteAllPortRules(VirtualMachine virtualMachine) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<PortRule> getPortRules(VirtualMachine virtualMachine) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getVMState(VirtualMachine virtualMachine) {
+    public VirtualMachine cloneVirtualMachine(VirtualMachine virtualMachine, CloneType type) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
