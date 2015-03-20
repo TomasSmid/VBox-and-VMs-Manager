@@ -142,7 +142,7 @@ public final class VirtualMachine implements Comparable<VirtualMachine>{
         return countOfMonitors;
     }
 
-    public Long getCpuExecutionCap() {
+    public Long getCPUExecutionCap() {
         return cpuExecutionCap;
     }
 

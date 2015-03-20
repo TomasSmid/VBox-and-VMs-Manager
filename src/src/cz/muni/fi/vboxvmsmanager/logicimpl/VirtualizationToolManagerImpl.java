@@ -20,6 +20,7 @@ import cz.muni.fi.vboxvmsmanager.pubapi.entities.VirtualMachine;
 import cz.muni.fi.vboxvmsmanager.pubapi.managers.VirtualizationToolManager;
 import cz.muni.fi.vboxvmsmanager.pubapi.types.CloneType;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -34,7 +35,7 @@ public class VirtualizationToolManagerImpl implements VirtualizationToolManager{
     }
     
     @Override
-    public VirtualMachine findVirtualMachineById(Long id) {
+    public VirtualMachine findVirtualMachineById(UUID id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -34,15 +34,15 @@ public class NativeVBoxAPIMachine {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public void addPortRule(VirtualMachine virtualMachine){
+    public void addPortRule(VirtualMachine virtualMachine, PortRule portRule){
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public void deletePortRule(String ruleName){
+    public void deletePortRule(VirtualMachine virtualMachine, String ruleName){
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public List<PortRule> getPortRules(){
+    public List<PortRule> getPortRules(VirtualMachine virtualMachine){
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

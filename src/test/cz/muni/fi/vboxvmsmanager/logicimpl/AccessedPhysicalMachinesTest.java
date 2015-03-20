@@ -31,7 +31,8 @@ import org.junit.rules.ExpectedException;
  */
 public class AccessedPhysicalMachinesTest {
 
-    @Rule public ExpectedException exception = ExpectedException.none();
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
     
     private AccessedPhysicalMachines sut;
     private List<PhysicalMachine> physicalMachines;

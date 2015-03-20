@@ -39,11 +39,11 @@ import org.virtualbox_4_3.VirtualBoxManager;
  */
 public class NativeVBoxAPIConnectionTest {
     
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+    
     private NativeVBoxAPIConnection sut;
     private AccessedPhysicalMachines apmMocked;
-    
-    @Rule public ExpectedException exception = ExpectedException.none();
-    
     
     @Before
     public void setUp() {        
@@ -282,7 +282,7 @@ public class NativeVBoxAPIConnectionTest {
     private List<VirtualMachine> createVMsList(PhysicalMachine pm){
         List<VirtualMachine> vms = new ArrayList<>();
         UUID uuid1 = UUID.fromString("670e746d-abea-4ba6-ad02-2a3b043810a5");
-        UUID uuid2 = UUID.fromString("00ee15d8-45b8-1299-aae7-48re9t54dasd");
+        UUID uuid2 = UUID.fromString("00ee15d8-45b8-1299-aae7-48ae9b54daed");
         VirtualMachine vm1 = new VirtualMachine.Builder(uuid1, "Fedora20", pm)
                                                .countOfCPU(1L).countOfMonitors(1L)
                                                .cpuExecutionCap(100L).hardDiskFreeSpaceSize(150_015_488_979L)

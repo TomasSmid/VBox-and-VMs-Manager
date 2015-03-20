@@ -18,6 +18,7 @@ package cz.muni.fi.vboxvmsmanager.logicimpl;
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.PhysicalMachine;
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.VirtualMachine;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -26,7 +27,7 @@ import java.util.List;
 public class NativeVBoxAPIManager {
     //pri implementaci tridy udelat ze tridy singleton
     
-    public VirtualMachine getVirtualMachineById(PhysicalMachine physicalMachine, Long id){
+    public VirtualMachine getVirtualMachineById(PhysicalMachine physicalMachine, UUID id){
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
@@ -38,19 +39,15 @@ public class NativeVBoxAPIManager {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public String getVBoxVersion(PhysicalMachine physicalMachine){
+    public void removeVM(VirtualMachine virtualMachine){
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public void createFullClone(VirtualMachine virtualMachine){
+    public VirtualMachine createFullClone(VirtualMachine virtualMachine){
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public void createLinkedClone(VirtualMachine virtualMachine){
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    public void transportVirtualMachine(VirtualMachine virtualMachine, PhysicalMachine physicalMachine){
+    public VirtualMachine createLinkedClone(VirtualMachine virtualMachine){
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

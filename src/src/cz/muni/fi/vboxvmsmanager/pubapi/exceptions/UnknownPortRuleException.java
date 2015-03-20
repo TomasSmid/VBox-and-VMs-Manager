@@ -13,26 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.muni.fi.vboxvmsmanager.pubapi.managers;
-
-import cz.muni.fi.vboxvmsmanager.pubapi.entities.VirtualMachine;
-import cz.muni.fi.vboxvmsmanager.pubapi.types.CloneType;
-import java.util.List;
-import java.util.UUID;
+package cz.muni.fi.vboxvmsmanager.pubapi.exceptions;
 
 /**
  *
  * @author Tomáš Šmíd
  */
-public interface VirtualizationToolManager {
+public class UnknownPortRuleException extends Exception{
     
-    public VirtualMachine findVirtualMachineById(UUID id);
+    public UnknownPortRuleException(String msg){
+        super(msg);
+    }
     
-    public VirtualMachine findVirtualMachineByName(String name);
+    public UnknownPortRuleException(Throwable cause){
+        super(cause);
+    }
     
-    public List<VirtualMachine> getVirtualMachines();
-    
-    public void removeVirtualMachine(VirtualMachine virtualMachine);
-    
-    public VirtualMachine cloneVirtualMachine(VirtualMachine virtualMachine, CloneType type);
+    public UnknownPortRuleException(String msg, Throwable cause){
+        super(msg,cause);
+    }
 }
+
