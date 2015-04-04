@@ -17,6 +17,7 @@ package cz.muni.fi.vboxvmsmanager.logicimpl;
 
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.PhysicalMachine;
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.VirtualMachine;
+import cz.muni.fi.vboxvmsmanager.pubapi.managers.VirtualMachineManager;
 import cz.muni.fi.vboxvmsmanager.pubapi.managers.VirtualizationToolManager;
 import cz.muni.fi.vboxvmsmanager.pubapi.types.CloneType;
 import java.util.List;
@@ -56,6 +57,11 @@ public class VirtualizationToolManagerImpl implements VirtualizationToolManager{
 
     @Override
     public VirtualMachine cloneVirtualMachine(VirtualMachine virtualMachine, CloneType type) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public VirtualMachineManager getVirtualMachineManager() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

@@ -35,4 +35,6 @@ public interface VirtualizationToolManager {
     public void removeVirtualMachine(VirtualMachine virtualMachine);
     
     public VirtualMachine cloneVirtualMachine(VirtualMachine virtualMachine, CloneType type);
+    
+    public VirtualMachineManager getVirtualMachineManager();
 }

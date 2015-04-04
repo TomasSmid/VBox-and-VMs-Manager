@@ -16,8 +16,12 @@
 package cz.muni.fi.vboxvmsmanager.logicimpl;
 
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.PhysicalMachine;
+import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.ConnectionFailureException;
+import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.DisconnectionFailureException;
+import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.IncompatibleVirtToolAPIVersionException;
 import cz.muni.fi.vboxvmsmanager.pubapi.managers.ConnectionManager;
 import cz.muni.fi.vboxvmsmanager.pubapi.managers.VirtualizationToolManager;
+import java.util.List;
 
 /**
  *
@@ -27,17 +31,47 @@ public class ConnectionManagerImpl implements ConnectionManager{
 
     @Override
     public VirtualizationToolManager connectTo(PhysicalMachine physicalMachine) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NativeVBoxAPIConnection natapiCon = NativeVBoxAPIConnection.getInstance();
+        
+        try{
+            natapiCon.connectTo(physicalMachine);
+        }catch(ConnectionFailureException | IncompatibleVirtToolAPIVersionException | InterruptedException ex){
+            System.err.println(ex.getMessage());
+            return null;
+        }
+        
+        System.out.println("Physical machine " + physicalMachine + " successfully connected");
+        
+        return new VirtualizationToolManagerImpl(physicalMachine);
     }
 
     @Override
     public void disconnectFrom(PhysicalMachine physicalMachine) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NativeVBoxAPIConnection natapiCon = NativeVBoxAPIConnection.getInstance();
+        boolean error = false;
+        
+        try{
+            natapiCon.disconnectFrom(physicalMachine);
+        }catch(DisconnectionFailureException ex){
+            System.err.println(ex.getMessage());
+            error = true;
+        }
+        
+        if(!error){
+            System.out.println("Physical machine " + physicalMachine + " disconnected");
+        }
     }
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NativeVBoxAPIConnection natapiCon = NativeVBoxAPIConnection.getInstance();
+        List<PhysicalMachine> conMachs = natapiCon.getConnectedPhysicalMachines();
+        
+        if(!conMachs.isEmpty()){
+            conMachs.stream().forEach((pm) -> {
+                disconnectFrom(pm);
+            });
+        }        
     }
     
 }

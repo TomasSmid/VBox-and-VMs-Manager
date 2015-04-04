@@ -13,15 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.muni.fi.vboxvmsmanager.pubapi.types;
+package cz.muni.fi.vboxvmsmanager.pubapi.exceptions;
 
 /**
  *
  * @author Tomáš Šmíd
  */
-public enum CloneType {
-    FULL_FROM_MACHINE_STATE,
-    FULL_FROM_MACHINE_AND_CHILD_STATES,
-    FULL_FROM_ALL_STATES,
-    LINKED
+public class UnexpectedVMStateException extends Exception{
+    
+    public UnexpectedVMStateException(String msg){
+        super(msg);
+    }
+    
+    public UnexpectedVMStateException(Throwable cause){
+        super(cause);
+    }
+    
+    public UnexpectedVMStateException(String msg, Throwable cause){
+        super(msg,cause);
+    }
 }

@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author Tomáš Šmíd
  */
-public class AccessedPhysicalMachines {
+class AccessedPhysicalMachines {
     
     private static final AccessedPhysicalMachines INSTANCE = new AccessedPhysicalMachines();
     private static List<PhysicalMachine> accessedPhysicalMachines = new ArrayList<>();
@@ -33,28 +33,54 @@ public class AccessedPhysicalMachines {
     }
     
     private static void addAPM(PhysicalMachine physicalMachine){
-        throw new UnsupportedOperationException("Not supported yet.");
+        accessedPhysicalMachines.add(physicalMachine);
     }
     
-    private static boolean removeAPM(PhysicalMachine physicalMachine){
-        throw new UnsupportedOperationException("Not supported yet.");
+    private static boolean removeAPM(PhysicalMachine physicalMachine){       
+        accessedPhysicalMachines.remove(physicalMachine);
+        return true;
     }
     
     private static boolean isAccessedPM(PhysicalMachine physicalMachine){
-        throw new UnsupportedOperationException("Not supported yet.");
+        return accessedPhysicalMachines.contains(physicalMachine);
+    }
+    
+    private static List<PhysicalMachine> getAccessedPMs(){
+        return accessedPhysicalMachines;
     }
     
     private AccessedPhysicalMachines(){ }
     
     public void add(PhysicalMachine physicalMachine){
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(physicalMachine == null){
+            throw new IllegalArgumentException("Adding new accessed PM failure: "
+                    + "There was made an attempt to add an illegal (null) physical "
+                    + "machine object to the list of accessed physical machines.");
+        }else{
+            addAPM(physicalMachine);
+        }
     }
     
     public boolean remove(PhysicalMachine physicalMachine){
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(physicalMachine == null){
+            throw new IllegalArgumentException("Removing accessed PM failure: "
+                    + "There was made an attempt to remove an illegal (null) "
+                    + "physical machine object from the list of accessed physical machines.");
+        }else{
+            return (isAccessedPM(physicalMachine) ? removeAPM(physicalMachine) : false);
+        }
     }
     
     public boolean isAccessed(PhysicalMachine physicalMachine){
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(physicalMachine == null){
+            throw new IllegalArgumentException("Method isAccessed failure: There was made an attempt "
+                    + "to query with illegal (null) physical machine object.");
+        }else{
+            return isAccessedPM(physicalMachine);
+        }
+    }
+    
+    public List<PhysicalMachine> getAccessedPhysicalMachines(){
+        return getAccessedPMs();
     }
 }

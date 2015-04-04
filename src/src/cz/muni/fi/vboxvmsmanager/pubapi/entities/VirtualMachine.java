@@ -34,7 +34,7 @@ public final class VirtualMachine implements Comparable<VirtualMachine>{
     private final Long sizeOfRAM;
     private final Long sizeOfVRAM;
     private final String typeOfOS;
-    private final String versionOfOS;
+    private final String identifierOfOS;
     
     //builder for more transparent set up VirtualMachine attributes
     public static class Builder{
@@ -49,56 +49,73 @@ public final class VirtualMachine implements Comparable<VirtualMachine>{
         private Long sizeOfRAM = 0L;
         private Long sizeOfVRAM = 0L;
         private String typeOfOS = "Unknown";
-        private String versionOfOS = "Unknown";
+        private String identifierOfOS = "Unknown";
         
         public Builder(UUID id, String vmName, PhysicalMachine hostMachine){
-            this.id = id;
-            this.vmName = vmName;
-            this.hostMachine = hostMachine;
+            if(id == null || id.toString().isEmpty()){
+                throw new IllegalArgumentException("Virtual machine inicialization failure: "
+                        + " ID must not be null nor empty.");
+            }else{
+                this.id = id;
+            }
+            
+            if(vmName == null || vmName.isEmpty()){
+                throw new IllegalArgumentException("Virtual machine inicialization failure: "
+                        + " Name of a virtual machine must not be null nor empty.");
+            }else{
+                this.vmName = vmName;
+            }
+            
+            if(hostMachine == null){
+                throw new IllegalArgumentException("Virtual machine inicialization failure: "
+                        + " Host machine of a virtual machine must be specified.");
+            }else{
+                this.hostMachine = hostMachine;
+            }
         }
         
         public Builder countOfCPU(Long value){
-            countOfCPU = value;
+            countOfCPU = (value != null && value >= 0L ? value : 0L);
             return this;
         }
         
         public Builder countOfMonitors(Long value){
-            countOfMonitors = value;
+            countOfMonitors = (value != null && value >= 0L ? value : 0L);
             return this;
         }
         
         public Builder cpuExecutionCap(Long value){
-            cpuExecutionCap = value;
+            cpuExecutionCap = (value != null && value >= 0L ? value : 0L);
             return this;
         }
         
         public Builder hardDiskFreeSpaceSize(Long value){
-            hardDiskFreeSpaceSize = value;
+            hardDiskFreeSpaceSize = (value != null && value >= 0L ? value : 0L);
             return this;
         }
         
         public Builder hardDiskTotalSize(Long value){
-            hardDiskTotalSize = value;
+            hardDiskTotalSize = (value != null && value >= 0L ? value : 0L);
             return this;
         }
         
         public Builder sizeOfRAM(Long value){
-            sizeOfRAM = value;
+            sizeOfRAM = (value != null && value >= 0L ? value : 0L);
             return this;
         }
         
         public Builder sizeOfVRAM(Long value){
-            sizeOfVRAM = value;
+            sizeOfVRAM = (value != null && value >= 0L ? value : 0L);
             return this;
         }
         
         public Builder typeOfOS(String value){
-            typeOfOS = value;
+            typeOfOS = (value != null && !value.equals("") ? value : "Unknown");
             return this;
         }
         
-        public Builder versionOfOS(String value){
-            versionOfOS = value;
+        public Builder identifierOfOS(String value){
+            identifierOfOS = (value != null && !value.equals("") ? value : "Unknown");
             return this;
         }
         
@@ -119,14 +136,14 @@ public final class VirtualMachine implements Comparable<VirtualMachine>{
         this.sizeOfRAM = builder.sizeOfRAM;
         this.sizeOfVRAM = builder.sizeOfVRAM;
         this.typeOfOS = builder.typeOfOS;
-        this.versionOfOS = builder.versionOfOS;
+        this.identifierOfOS = builder.identifierOfOS;
     }
 
     public UUID getId() {
         return id;
     }
 
-    public String getVmName() {
+    public String getVMName() {
         return vmName;
     }
 
@@ -166,8 +183,8 @@ public final class VirtualMachine implements Comparable<VirtualMachine>{
         return typeOfOS;
     }
 
-    public String getVersionOfOS() {
-        return versionOfOS;
+    public String getIdentifierOfOS() {
+        return identifierOfOS;
     }    
     
     @Override

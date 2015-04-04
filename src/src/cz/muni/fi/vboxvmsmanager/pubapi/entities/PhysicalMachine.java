@@ -23,23 +23,37 @@ import java.util.Objects;
  */
 public final class PhysicalMachine implements Comparable<PhysicalMachine>{
     private final String addressIP;
-    private final String portOfVBoxWebServer;
+    private final String portOfVTWebServer;
     private final String username;
     private final String userPassword;
     
     public PhysicalMachine(String addressIP, String websrvPort, String username, String userPassword){
-        this.addressIP = addressIP;
-        this.portOfVBoxWebServer = websrvPort;
-        this.username = username;
-        this.userPassword = userPassword;
+        if(addressIP == null || addressIP.isEmpty()){
+            throw new IllegalArgumentException("Physical machine inicialization failure: "
+                    + "IP address of physical machine must be specified as non-empty string value,"
+                    + " which complies with IPv4 or IPv6 form.");
+        }else{
+            this.addressIP = addressIP;
+        }
+        
+        if(websrvPort == null || websrvPort.isEmpty()){
+            throw new IllegalArgumentException("Physical machine inicialization failure: "
+                    + "Port of remote web server must be specified as non-empty string value"
+                    + " containing only number.");
+        }else{
+            this.portOfVTWebServer = websrvPort;
+        }
+        
+        this.username = (username == null ? "" : username);
+        this.userPassword = (userPassword == null ? "" : userPassword);
     }
 
     public String getAddressIP() {
         return addressIP;
     }
 
-    public String getPortOfVBoxWebServer() {
-        return portOfVBoxWebServer;
+    public String getPortOfVTWebServer() {
+        return portOfVTWebServer;
     }
 
     public String getUsername() {
@@ -57,53 +71,27 @@ public final class PhysicalMachine implements Comparable<PhysicalMachine>{
         PhysicalMachine pm = (PhysicalMachine)obj;
         return ((this.addressIP == pm.addressIP) || 
                 (this.addressIP != null && this.addressIP.equals(pm.addressIP))) &&
-               ((this.portOfVBoxWebServer == pm.portOfVBoxWebServer) ||
-                (this.portOfVBoxWebServer != null && this.portOfVBoxWebServer.equals(pm.portOfVBoxWebServer)));
+               ((this.portOfVTWebServer == pm.portOfVTWebServer) ||
+                (this.portOfVTWebServer != null && this.portOfVTWebServer.equals(pm.portOfVTWebServer)));
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
         hash = 89 * hash + Objects.hashCode(this.addressIP);
-        hash = 89 * hash + Objects.hashCode(this.portOfVBoxWebServer);
+        hash = 89 * hash + Objects.hashCode(this.portOfVTWebServer);
         return hash;
     }
     
     @Override
     public String toString(){
-        return "[" + "Physical machine: IP address=" + this.addressIP + "]"; 
+        return "[" + "Physical machine: IP address=" + this.addressIP 
+                + ", VT web server port=" + this.portOfVTWebServer + "]"; 
     }
     
     @Override
     public int compareTo(PhysicalMachine pm){
         int result = this.addressIP.compareTo(pm.addressIP);
-        return (result == 0 ? this.portOfVBoxWebServer.compareTo(pm.portOfVBoxWebServer) : result);
+        return (result == 0 ? this.portOfVTWebServer.compareTo(pm.portOfVTWebServer) : result);
     }
-
-    /*@Override
-    public int compareTo(PhysicalMachine pm) {
-        int[] dec1 = getIPDecimals(this.addressIP);
-        int[] dec2 = getIPDecimals(pm.addressIP);
-        int websrvPort1 = Integer.parseInt(this.portOfVBoxWebServer);
-        int websrvPort2 = Integer.parseInt(this.portOfVBoxWebServer);
-        
-        for(int i = 0; i < 4; ++i){
-            if(dec1[i] < dec2[i]) return -1;
-            if(dec1[i] > dec2[i]) return 1;
-        }
-        if(websrvPort1 < websrvPort2) return -1;
-        if(websrvPort1 > websrvPort2) return 1;
-        return 0;
-    }
-    
-    private int[] getIPDecimals(String ip){
-        String[] strDec = ip.split(".");
-        int[] decimals = new int[4];
-        
-        for(int i = 0; i < 4; ++i){
-            decimals[i] = Integer.parseInt(strDec[i]);
-        }
-        
-        return decimals;
-    }*/
 }

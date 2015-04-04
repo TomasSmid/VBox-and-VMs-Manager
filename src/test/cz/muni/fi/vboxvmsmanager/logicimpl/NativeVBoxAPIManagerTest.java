@@ -18,6 +18,7 @@ package cz.muni.fi.vboxvmsmanager.logicimpl;
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.PhysicalMachine;
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.VirtualMachine;
 import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.ConnectionFailureException;
+import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.IncompatibleVirtToolAPIVersionException;
 import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.UnknownVirtualMachineException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +65,7 @@ public class NativeVBoxAPIManagerTest {
     }
     
     @Test
-    public void getVMByIdWithValidIdAndSomeMatch(){
+    public void getVMByIdWithValidIdAndSomeMatch() throws ConnectionFailureException, InterruptedException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
         PhysicalMachine pm = new PhysicalMachine("150.150.14.87","18083","John","trio158hy7");
         doReturn("793d084a-0189-4a55-a9b7-531c455570a1").when(machMocked).getId();
         doReturn("Fedora-21-WS").when(machMocked).getName();
@@ -80,7 +81,7 @@ public class NativeVBoxAPIManagerTest {
         VirtualMachine expVM = new VirtualMachine.Builder(UUID.fromString("793d084a-0189-4a55-a9b7-531c455570a1"), "Fedora-21-WS", pm)
                                                  .countOfCPU(1L).countOfMonitors(1L).cpuExecutionCap(100L)
                                                  .hardDiskFreeSpaceSize(14286848000L).hardDiskTotalSize(21474836480L)
-                                                 .sizeOfRAM(4096L).sizeOfVRAM(12L).typeOfOS("Linux").versionOfOS("Fedora_64").build();
+                                                 .sizeOfRAM(4096L).sizeOfVRAM(12L).typeOfOS("Linux").identifierOfOS("Fedora_64").build();
         VirtualMachine actVM = sut.getVirtualMachineById(pm, UUID.fromString("793d084a-0189-4a55-a9b7-531c455570a1"));
         
         assertNotNull("Returned virtual machine should not be null",actVM);
@@ -88,7 +89,7 @@ public class NativeVBoxAPIManagerTest {
     }
     
     @Test
-    public void getVMByIdWithValidIdAndNoMatch(){
+    public void getVMByIdWithValidIdAndNoMatch() throws ConnectionFailureException, InterruptedException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
         PhysicalMachine pm = new PhysicalMachine("150.150.14.87","18083","John","trio158hy7");
         doThrow(VBoxException.class).when(vboxMocked).findMachine("793d084a-0189-4a55-a9b7-531c455570a1");
         
@@ -97,7 +98,7 @@ public class NativeVBoxAPIManagerTest {
     }
     
     @Test
-    public void getVMByIdWithNullId(){
+    public void getVMByIdWithNullId() throws ConnectionFailureException, InterruptedException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
         PhysicalMachine pm = new PhysicalMachine("150.150.14.87","18083","John","trio158hy7");
         
         exception.expect(IllegalArgumentException.class);
@@ -108,7 +109,7 @@ public class NativeVBoxAPIManagerTest {
     }
     
     @Test
-    public void getVMByIdInvalidConnection(){
+    public void getVMByIdInvalidConnection() throws ConnectionFailureException, InterruptedException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
         PhysicalMachine pm = new PhysicalMachine("150.150.14.87","18083","John","trio158hy7");
         doThrow(VBoxException.class).when(vbmMocked).connect("http://150.150.14.87:18083", "John", "trio158hy7");
         
@@ -121,7 +122,7 @@ public class NativeVBoxAPIManagerTest {
     }
     
     @Test
-    public void getVMByNameWithValidNameAndSomeMatch(){
+    public void getVMByNameWithValidNameAndSomeMatch() throws ConnectionFailureException, InterruptedException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
         PhysicalMachine pm = new PhysicalMachine("150.150.14.87","18083","John","trio158hy7");
         doReturn("793d084a-0189-4a55-a9b7-531c455570a1").when(machMocked).getId();
         doReturn("Fedora-21-WS").when(machMocked).getName();
@@ -137,7 +138,7 @@ public class NativeVBoxAPIManagerTest {
         VirtualMachine expVM = new VirtualMachine.Builder(UUID.fromString("793d084a-0189-4a55-a9b7-531c455570a1"), "Fedora-21-WS", pm)
                                                  .countOfCPU(1L).countOfMonitors(1L).cpuExecutionCap(100L)
                                                  .hardDiskFreeSpaceSize(14286848000L).hardDiskTotalSize(21474836480L)
-                                                 .sizeOfRAM(4096L).sizeOfVRAM(12L).typeOfOS("Linux").versionOfOS("Fedora_64").build();
+                                                 .sizeOfRAM(4096L).sizeOfVRAM(12L).typeOfOS("Linux").identifierOfOS("Fedora_64").build();
         VirtualMachine actVM = sut.getVirtualMachineByName(pm, "Fedora-21-WS");
         
         assertNotNull("Returned virtual machine should not be null",actVM);
@@ -145,7 +146,7 @@ public class NativeVBoxAPIManagerTest {
     }
     
     @Test
-    public void getVMByNameWithValidNameAndNoMatch(){
+    public void getVMByNameWithValidNameAndNoMatch() throws ConnectionFailureException, InterruptedException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
         PhysicalMachine pm = new PhysicalMachine("150.150.14.87","18083","John","trio158hy7");
         doThrow(VBoxException.class).when(vboxMocked).findMachine("Fedora-21-WS");
         
@@ -154,7 +155,7 @@ public class NativeVBoxAPIManagerTest {
     }
     
     @Test
-    public void getVMByNameWithEmptyNameString(){
+    public void getVMByNameWithEmptyNameString() throws ConnectionFailureException, InterruptedException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
         PhysicalMachine pm = new PhysicalMachine("150.150.14.87","18083","John","trio158hy7");
         
         exception.expect(IllegalArgumentException.class);
@@ -165,7 +166,7 @@ public class NativeVBoxAPIManagerTest {
     }
     
     @Test
-    public void getVMByNameWithNullName(){
+    public void getVMByNameWithNullName() throws ConnectionFailureException, InterruptedException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
         PhysicalMachine pm = new PhysicalMachine("150.150.14.87","18083","John","trio158hy7");
         
         exception.expect(IllegalArgumentException.class);
@@ -258,7 +259,7 @@ public class NativeVBoxAPIManagerTest {
         VirtualMachine vmToRem = new VirtualMachine.Builder(UUID.fromString("793d047c-1148-4a55-a9b7-00aa455570a1"), "Fedora-21-WS", pm)
                                                      .countOfCPU(1L).countOfMonitors(1L).cpuExecutionCap(100L)
                                                      .hardDiskFreeSpaceSize(14286848000L).hardDiskTotalSize(21474836480L)
-                                                     .sizeOfRAM(4096L).sizeOfVRAM(12L).typeOfOS("Linux").versionOfOS("Fedora_64").build();
+                                                     .sizeOfRAM(4096L).sizeOfVRAM(12L).typeOfOS("Linux").identifierOfOS("Fedora_64").build();
         
         sut.removeVM(vmToRem);
         
@@ -472,7 +473,7 @@ public class NativeVBoxAPIManagerTest {
     
     private void assertDeepVMsEquals(VirtualMachine expVM, VirtualMachine actVM){
         assertEquals("VMs should have same id",expVM.getId(),actVM.getId());
-        assertEquals("VMs should have same name",expVM.getVmName(),actVM.getVmName());
+        assertEquals("VMs should have same name",expVM.getVMName(),actVM.getVMName());
         assertEquals("VMs should have same host machine",expVM.getHostMachine(),actVM.getHostMachine());
         assertEquals("VMs should have same count of CPUs",expVM.getCountOfCPU(),actVM.getCountOfCPU());
         assertEquals("VMs should have same count of monitors",expVM.getCountOfMonitors(),actVM.getCountOfMonitors());
@@ -482,14 +483,14 @@ public class NativeVBoxAPIManagerTest {
         assertEquals("VMs should have same RAM size",expVM.getSizeOfRAM(),actVM.getSizeOfRAM());
         assertEquals("VMs should have same video RAM size",expVM.getSizeOfVRAM(),actVM.getSizeOfVRAM());
         assertEquals("VMs should have same type of OS",expVM.getTypeOfOS(),actVM.getTypeOfOS());
-        assertEquals("VMs should have same version of OS",expVM.getVersionOfOS(),actVM.getVersionOfOS());
+        assertEquals("VMs should have same version of OS",expVM.getIdentifierOfOS(),actVM.getIdentifierOfOS());
     }
     
     private static Comparator<VirtualMachine> vmComparator = (VirtualMachine o1, VirtualMachine o2) -> {
         int res = o1.getId().compareTo(o2.getId());
         
         if(res == 0){
-            return (o1.getVmName().compareTo(o2.getVmName())); 
+            return (o1.getVMName().compareTo(o2.getVMName())); 
         }
         
         return res;

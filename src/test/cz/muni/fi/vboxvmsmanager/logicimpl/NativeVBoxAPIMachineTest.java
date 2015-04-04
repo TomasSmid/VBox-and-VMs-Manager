@@ -20,13 +20,13 @@ import cz.muni.fi.vboxvmsmanager.pubapi.entities.PortRule;
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.VirtualMachine;
 import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.ConnectionFailureException;
 import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.PortRuleDuplicityException;
+import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.UnexpectedVMStateException;
 import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.UnknownPortRuleException;
 import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.UnknownVirtualMachineException;
 import cz.muni.fi.vboxvmsmanager.pubapi.types.ProtocolType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import org.junit.Before;
@@ -78,7 +78,7 @@ public class NativeVBoxAPIMachineTest {
     public void startVMWithValidConnectionAndExistingVM(){
         VirtualMachine vm = new VMBuilder().build();
         String url = "http://" + vm.getHostMachine().getAddressIP() + ":"
-                        + vm.getHostMachine().getPortOfVBoxWebServer();
+                        + vm.getHostMachine().getPortOfVTWebServer();
         String user = vm.getHostMachine().getUsername();
         String pswd = vm.getHostMachine().getUserPassword();
         ISession sesMocked = mock(ISession.class);
@@ -111,10 +111,21 @@ public class NativeVBoxAPIMachineTest {
     }
     
     @Test
+    public void startAlreadyRunningVM(){
+        VirtualMachine vm = new VMBuilder().build();
+        
+        exception.expect(UnexpectedVMStateException.class);
+        sut.startVM(vm);
+        
+        exception = ExpectedException.none();
+        verify(machMocked, never()).launchVMProcess(any(ISession.class), anyString(), anyString());
+    }
+    
+    @Test
     public void startVMWithInvalidConnection(){
         VirtualMachine vm = new VMBuilder().build();
         String url = "http://" + vm.getHostMachine().getAddressIP() + ":"
-                        + vm.getHostMachine().getPortOfVBoxWebServer();
+                        + vm.getHostMachine().getPortOfVTWebServer();
         String user = vm.getHostMachine().getUsername();
         String pswd = vm.getHostMachine().getUserPassword();
         
@@ -131,7 +142,7 @@ public class NativeVBoxAPIMachineTest {
     public void shutDownVMWithValidConnectionAndExistingVM(){
         VirtualMachine vm = new VMBuilder().build();
         String url = "http://" + vm.getHostMachine().getAddressIP() + ":"
-                        + vm.getHostMachine().getPortOfVBoxWebServer();
+                        + vm.getHostMachine().getPortOfVTWebServer();
         String user = vm.getHostMachine().getUsername();
         String pswd = vm.getHostMachine().getUserPassword();
         ISession sesMocked = mock(ISession.class);
@@ -166,10 +177,24 @@ public class NativeVBoxAPIMachineTest {
     }
     
     @Test
+    public void shutDownAlreadyPoweredOffVM(){
+        VirtualMachine vm = new VMBuilder().build();
+        ISession sesMocked = mock(ISession.class);
+        IConsole consoleMocked = mock(IConsole.class);
+        
+        exception.expect(UnexpectedVMStateException.class);
+        sut.startVM(vm);
+        
+        exception = ExpectedException.none();
+        verify(sesMocked, never()).getConsole();
+        verify(consoleMocked, never()).powerDown();
+    }
+    
+    @Test
     public void shutDownVMWithInvalidConnection(){
         VirtualMachine vm = new VMBuilder().build();
         String url = "http://" + vm.getHostMachine().getAddressIP() + ":"
-                        + vm.getHostMachine().getPortOfVBoxWebServer();
+                        + vm.getHostMachine().getPortOfVTWebServer();
         String user = vm.getHostMachine().getUsername();
         String pswd = vm.getHostMachine().getUserPassword();
         
@@ -187,7 +212,7 @@ public class NativeVBoxAPIMachineTest {
         VirtualMachine vm = new VMBuilder().build();
         PortRule pr = new PortRule.Builder("Rule1",2222,22).build();
         String url = "http://" + vm.getHostMachine().getAddressIP() + ":"
-                        + vm.getHostMachine().getPortOfVBoxWebServer();
+                        + vm.getHostMachine().getPortOfVTWebServer();
         String user = vm.getHostMachine().getUsername();
         String pswd = vm.getHostMachine().getUserPassword();
         INATEngine natenMocked = mock(INATEngine.class);
@@ -288,7 +313,7 @@ public class NativeVBoxAPIMachineTest {
     }
     
     @Test
-    public void addPortRuleWithTooHighHostPortNumber(){
+    public void addPortRuleWithTooBigHostPortNumber(){
         VirtualMachine vm = new VMBuilder().build();
         PortRule pr = new PortRule.Builder("Rule1",65536,22).build();
         INATEngine natenMocked = mock(INATEngine.class);
@@ -316,7 +341,7 @@ public class NativeVBoxAPIMachineTest {
     }
     
     @Test
-    public void addPortRuleWithTooHighGuestPortNumber(){
+    public void addPortRuleWithTooBigGuestPortNumber(){
         VirtualMachine vm = new VMBuilder().build();
         PortRule pr = new PortRule.Builder("Rule1",2222,65536).build();
         INATEngine natenMocked = mock(INATEngine.class);
@@ -375,7 +400,7 @@ public class NativeVBoxAPIMachineTest {
         VirtualMachine vm = new VMBuilder().build();
         PortRule pr = new PortRule.Builder("Rule1",2222,22).build();
         String url = "http://" + vm.getHostMachine().getAddressIP() + ":"
-                        + vm.getHostMachine().getPortOfVBoxWebServer();
+                        + vm.getHostMachine().getPortOfVTWebServer();
         String user = vm.getHostMachine().getUsername();
         String pswd = vm.getHostMachine().getUserPassword();
         INATEngine natenMocked = mock(INATEngine.class);
@@ -473,7 +498,7 @@ public class NativeVBoxAPIMachineTest {
         VirtualMachine vm = new VMBuilder().build();
         String ruleName = "Rule1";
         String url = "http://" + vm.getHostMachine().getAddressIP() + ":"
-                        + vm.getHostMachine().getPortOfVBoxWebServer();
+                        + vm.getHostMachine().getPortOfVTWebServer();
         String user = vm.getHostMachine().getUsername();
         String pswd = vm.getHostMachine().getUserPassword();
         INATEngine natenMocked = mock(INATEngine.class);
@@ -524,7 +549,7 @@ public class NativeVBoxAPIMachineTest {
         VirtualMachine vm = new VMBuilder().build();
         String ruleName = "Rule1";
         String url = "http://" + vm.getHostMachine().getAddressIP() + ":"
-                        + vm.getHostMachine().getPortOfVBoxWebServer();
+                        + vm.getHostMachine().getPortOfVTWebServer();
         String user = vm.getHostMachine().getUsername();
         String pswd = vm.getHostMachine().getUserPassword();
         INATEngine natenMocked = mock(INATEngine.class);
