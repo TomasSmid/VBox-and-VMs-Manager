@@ -69,7 +69,7 @@ public class VirtualMachineManagerImplTest {
         final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));        
         String outMsg = "Starting " + vm.toString() + "\n"
-            + "\"" + vm.getVMName() + "\" is Running";        
+            + "\"" + vm.getName() + "\" is Running";        
         
         sut.startVM(vm);
         
@@ -155,7 +155,7 @@ public class VirtualMachineManagerImplTest {
         final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
         String outMsg = "Shutting down " + vm.toString() + "\n"
-            + "\"" + vm.getVMName() + "\" is PoweredOff";
+            + "\"" + vm.getName() + "\" is PoweredOff";
         
         sut.shutDownVM(vm);
         
@@ -241,7 +241,7 @@ public class VirtualMachineManagerImplTest {
         PortRule pr = new PortRule.Builder("Rule1", 2222, 22).build();
         final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
-        String outMsg = "Port rule \"" + pr.getRuleName() + "\" added successfully";
+        String outMsg = "Port rule \"" + pr.getName() + "\" added successfully";
         
         sut.addPortRule(vm, pr);
         
@@ -254,7 +254,7 @@ public class VirtualMachineManagerImplTest {
         PortRule pr = new PortRule.Builder("Rule1", 2222, 22).build();
         final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
-        String errMsg = "Adding port rule failure: Port rule named \"" + pr.getRuleName() + "\""
+        String errMsg = "Adding port rule failure: Port rule named \"" + pr.getName() + "\""
                 + " associated with virtual machine " + vm.toString() + " already exists."
                 + " Name of port rule must be unique within a single virtual machine.";
         doThrow(PortRuleDuplicityException.class).when(natmachMocked).addPortRule(vm, pr);
@@ -271,7 +271,7 @@ public class VirtualMachineManagerImplTest {
         PortRule pr2 = new PortRule.Builder("Rule2", 2222, 23).build();
         final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
-        String errMsg = "Adding port rule failure: Port rule named \"" + pr2.getRuleName() + "\""
+        String errMsg = "Adding port rule failure: Port rule named \"" + pr2.getName() + "\""
                 + " uses host port number \"" + pr2.getHostPort() + "\", which is already used"
                 + " by any other port rule within the same virtual machine. Host port number can"
                 + " be used only once within a single virtual machine.";
@@ -335,7 +335,7 @@ public class VirtualMachineManagerImplTest {
         PortRule pr = new PortRule.Builder("Rule1", -1, 22).build();
         final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
-        String errMsg = "Adding port rule failure: Port rule named \"" + pr.getRuleName() + "\""
+        String errMsg = "Adding port rule failure: Port rule named \"" + pr.getName() + "\""
                 + " has negative host port number. Port number can only be some of the range 0-65535.";
         doThrow(IllegalArgumentException.class).when(natmachMocked).addPortRule(vm, pr);
         
@@ -350,7 +350,7 @@ public class VirtualMachineManagerImplTest {
         PortRule pr = new PortRule.Builder("Rule1", 65536, 22).build();
         final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
-        String errMsg = "Adding port rule failure: Port rule named \"" + pr.getRuleName() + "\""
+        String errMsg = "Adding port rule failure: Port rule named \"" + pr.getName() + "\""
                 + " has too big host port number. Port number can only be some of the range 0-65535.";
         doThrow(IllegalArgumentException.class).when(natmachMocked).addPortRule(vm, pr);
         
@@ -365,7 +365,7 @@ public class VirtualMachineManagerImplTest {
         PortRule pr = new PortRule.Builder("Rule1", 2222, -1).build();
         final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
-        String errMsg = "Adding port rule failure: Port rule named \"" + pr.getRuleName() + "\""
+        String errMsg = "Adding port rule failure: Port rule named \"" + pr.getName() + "\""
                 + " has negative guest port number. Port number can only be some of the range 0-65535.";
         doThrow(IllegalArgumentException.class).when(natmachMocked).addPortRule(vm, pr);
         
@@ -380,7 +380,7 @@ public class VirtualMachineManagerImplTest {
         PortRule pr = new PortRule.Builder("Rule1", 2222, 65536).build();
         final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
-        String errMsg = "Adding port rule failure: Port rule named \"" + pr.getRuleName() + "\""
+        String errMsg = "Adding port rule failure: Port rule named \"" + pr.getName() + "\""
                 + " has too big guest port number. Port number can only be some of the range 0-65535.";
         doThrow(IllegalArgumentException.class).when(natmachMocked).addPortRule(vm, pr);
         
@@ -516,7 +516,7 @@ public class VirtualMachineManagerImplTest {
     }
     
     private void assertDeepPREquals(PortRule expPR, PortRule actPR){
-        assertEquals("Port rules names should be same",expPR.getRuleName(),actPR.getRuleName());
+        assertEquals("Port rules names should be same",expPR.getName(),actPR.getName());
         assertEquals("Port rules protocols should be same",expPR.getProtocol(),actPR.getProtocol());
         assertEquals("Port rules host IPs should be same",expPR.getHostIP(),actPR.getHostIP());
         assertEquals("Port rules host ports should be same",expPR.getHostPort(),actPR.getHostPort());

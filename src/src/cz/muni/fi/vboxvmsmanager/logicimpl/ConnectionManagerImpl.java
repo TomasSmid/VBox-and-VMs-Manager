@@ -33,14 +33,22 @@ public class ConnectionManagerImpl implements ConnectionManager{
     public VirtualizationToolManager connectTo(PhysicalMachine physicalMachine) {
         NativeVBoxAPIConnection natapiCon = NativeVBoxAPIConnection.getInstance();
         
-        try{
-            natapiCon.connectTo(physicalMachine);
-        }catch(ConnectionFailureException | IncompatibleVirtToolAPIVersionException | InterruptedException ex){
-            System.err.println(ex.getMessage());
+        if(physicalMachine != null){
+            System.out.println("Connecting to \"http://" + physicalMachine.getAddressIP() + ":" + physicalMachine.getPortOfVTWebServer() + "\"");
+            try{
+                natapiCon.connectTo(physicalMachine);
+            }catch(ConnectionFailureException | IncompatibleVirtToolAPIVersionException | InterruptedException
+                  | IllegalArgumentException ex){
+                
+                System.err.println(ex.getMessage());
+                return null;
+            }
+
+            System.out.println("Physical machine " + physicalMachine + " successfully connected");
+        }else{
+            System.err.println("Connection failure: There was made an attempt to connect to a null physical machine.");
             return null;
         }
-        
-        System.out.println("Physical machine " + physicalMachine + " successfully connected");
         
         return new VirtualizationToolManagerImpl(physicalMachine);
     }
@@ -50,15 +58,20 @@ public class ConnectionManagerImpl implements ConnectionManager{
         NativeVBoxAPIConnection natapiCon = NativeVBoxAPIConnection.getInstance();
         boolean error = false;
         
-        try{
-            natapiCon.disconnectFrom(physicalMachine);
-        }catch(DisconnectionFailureException ex){
-            System.err.println(ex.getMessage());
-            error = true;
-        }
-        
-        if(!error){
-            System.out.println("Physical machine " + physicalMachine + " disconnected");
+        if(physicalMachine != null){
+            System.out.println("Disconnecting from \"http://" + physicalMachine.getAddressIP() + ":" + physicalMachine.getPortOfVTWebServer() + "\"");
+            try{
+                natapiCon.disconnectFrom(physicalMachine);
+            }catch(DisconnectionFailureException | IllegalArgumentException ex){
+                System.err.println(ex.getMessage());
+                error = true;
+            }
+
+            if(!error){
+                System.out.println("Physical machine " + physicalMachine + " disconnected");
+            }
+        }else{
+            System.err.println("Disconnection failure: There was made an attempt to disconnect from a null physical machine.");
         }
     }
 

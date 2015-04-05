@@ -37,6 +37,7 @@ import org.virtualbox_4_3.ISession;
 import org.virtualbox_4_3.ISnapshot;
 import org.virtualbox_4_3.IVirtualBox;
 import org.virtualbox_4_3.LockType;
+import org.virtualbox_4_3.MachineState;
 import org.virtualbox_4_3.VBoxException;
 import org.virtualbox_4_3.VirtualBoxManager;
 import org.virtualbox_4_3.SessionState;
@@ -54,10 +55,11 @@ final class NativeVBoxAPIManager {
     }
     
     public VirtualMachine getVirtualMachineById(PhysicalMachine physicalMachine, UUID id) throws InterruptedException,
-            ConnectionFailureException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
+            ConnectionFailureException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException,
+            UnexpectedVMStateException{
         
         String errMsgForPMNullCheck = "Retrieving virtual machine by id failure: There was made an attempt to retrieve virtual machine with id = " + id + " from a null physical machine.";
-        String errMsgForVMIdCheck = "Retrieving virtual machine by id failure: There was made an attempt to retrieve virtual machine by a null id.";
+        String errMsgForVMIdCheck = "Retrieving virtual machine by id failure: There was made an attempt to retrieve virtual machine by a null or an empty id.";
         String errMsgForNotConnectedPM = "Connection failure while trying to retrieve virtual machine by id: There cannot be retrieved any virtual machine from physical machine " + physicalMachine + " now, because this physical machine is not connected.";
         String errMsgForPMConError = "Connection failure while trying to retrieve virtual machine by id from physical machine " + physicalMachine + ": ";
         String errMsgForUnknownVM = "Retrieving virtual machine by id failure: There is no virtual machine with id = " + id + " on physical machine " + physicalMachine + " known to VirtualBox.";
@@ -71,7 +73,8 @@ final class NativeVBoxAPIManager {
     }
     
     public VirtualMachine getVirtualMachineByName(PhysicalMachine physicalMachine, String name) throws InterruptedException,
-            ConnectionFailureException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
+            ConnectionFailureException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException,
+            UnexpectedVMStateException{
         
         String errMsgForPMNullCheck = "Retrieving virtual machine by name failure: There was made an attempt to retrieve virtual machine with name = " + name + " from a null physical machine.";
         String errMsgForVMNameCheck = "Retrieving virtual machine by name failure: There was made an attempt to retrieve virtual machine by a null or empty name.";
@@ -88,7 +91,7 @@ final class NativeVBoxAPIManager {
     }
     
     public List<VirtualMachine> getVirtualMachines(PhysicalMachine physicalMachine) throws InterruptedException,
-            ConnectionFailureException, IncompatibleVirtToolAPIVersionException{
+            ConnectionFailureException, IncompatibleVirtToolAPIVersionException, UnexpectedVMStateException{
         
         String errMsgForPMNullCheck = "Retrieving all virtual machines failure: There was made an attempt to retrieve all virtual machines from a null physical machine.";
         String errMsgForNotConnectedPM = "Connection failure while trying to retrieve all virtual machines from physical machine " + physicalMachine + ": There cannot be retrieved any virtual machine from this physical machine now, because it is not connected.";
@@ -151,7 +154,7 @@ final class NativeVBoxAPIManager {
                 vboxMachine.unregister(CleanupMode.DetachAllReturnHardDisksOnly);
             }catch(VBoxException ex){ /*machine was not registered*/ }
         }else{
-            checkVMStateForRemoving(vboxMachine.getState().toString(), errMsgForVMStateCheck);
+            checkVMStateForRemoving(vboxMachine.getState(), errMsgForVMStateCheck);
 
             if(isLinkedClone(vboxMachine, vbox)){
                 ISession session = vbm.getSessionObject();
@@ -198,7 +201,7 @@ final class NativeVBoxAPIManager {
             vbm.cleanup();
             throw new UnexpectedVMStateException("Cloning virtual machine " + virtualMachine + " on physical machine " + virtualMachine.getHostMachine() + " failure: " + vboxMachine.getAccessError().getText());
         }
-        checkVMStateForCloning(vboxMachine.getState().toString(), errMsgForVMStateCheck);
+        checkVMStateForCloning(vboxMachine.getState(), errMsgForVMStateCheck);
         
         String cloneName = getNewCloneName(vboxMachine.getName(), vbox, cloneType);
         
@@ -270,11 +273,11 @@ final class NativeVBoxAPIManager {
         }
     }
     
-    private void checkPMIsConnected(PhysicalMachine pm, String errMsg){
+    private void checkPMIsConnected(PhysicalMachine pm, String errMsg) throws UnexpectedVMStateException{
         NativeVBoxAPIConnection natapiCon = NativeVBoxAPIConnection.getInstance();
         
         if(!natapiCon.isConnected(pm)){
-            throw new IllegalStateException(errMsg);
+            throw new UnexpectedVMStateException(errMsg);
         }
     }
     
@@ -284,18 +287,18 @@ final class NativeVBoxAPIManager {
         }
     }
     
-    private void checkVMStateForCloning(String state, String errMsg) throws UnexpectedVMStateException{
+    private void checkVMStateForCloning(MachineState state, String errMsg) throws UnexpectedVMStateException{
         switch(state){
-            case "PoweredOff":
-            case "Saved"     :
-            case "Running"   :
-            case "Paused"    :
-            default          : throw new UnexpectedVMStateException(errMsg);
+            case PoweredOff:
+            case Saved     :
+            case Running   :
+            case Paused    : break;
+            default        : throw new UnexpectedVMStateException(errMsg);
         }
     }
     
-    private void checkVMStateForRemoving(String state, String errMsg) throws UnexpectedVMStateException{
-        if(!state.equals("PoweredOff")){
+    private void checkVMStateForRemoving(MachineState state, String errMsg) throws UnexpectedVMStateException{
+        if(state != MachineState.PoweredOff){
             throw new UnexpectedVMStateException(errMsg);
         }
     }
@@ -446,7 +449,7 @@ final class NativeVBoxAPIManager {
             case FULL_FROM_MACHINE_STATE            :
             case FULL_FROM_ALL_STATES               : sufix = "_FullClone"; break;
             case LINKED                             : sufix = "_LinkClone"; break;
-            default: throw new IllegalStateException("Cloning virtual machine " + origName + " failure: There was used illegal type of clone.");
+            default: throw new IllegalArgumentException("Cloning virtual machine " + origName + " failure: There was used illegal type of clone.");
         }
         
         int count = 1;

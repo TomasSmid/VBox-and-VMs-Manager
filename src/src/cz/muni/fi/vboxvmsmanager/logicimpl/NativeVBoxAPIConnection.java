@@ -43,9 +43,8 @@ class NativeVBoxAPIConnection {
         
     }
     
-    public void connectTo(PhysicalMachine physicalMachine) throws ConnectionFailureException,
-                                                                  IncompatibleVirtToolAPIVersionException,
-                                                                  InterruptedException{
+    public void connectTo(PhysicalMachine physicalMachine) throws ConnectionFailureException, InterruptedException,
+            IncompatibleVirtToolAPIVersionException{
         
         String errMsgForNullPM = "Connection failure: There was made an attempt to connect to a null physical machine.";
         String errMsgForInvalidCon = "Connecting to physical machine " + physicalMachine + " failure: ";

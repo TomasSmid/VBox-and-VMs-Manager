@@ -24,7 +24,7 @@ import java.util.UUID;
  */
 public final class VirtualMachine implements Comparable<VirtualMachine>{
     private final UUID id;
-    private final String vmName;
+    private final String name;
     private final PhysicalMachine hostMachine;
     private final Long countOfCPU;
     private final Long countOfMonitors;
@@ -39,7 +39,7 @@ public final class VirtualMachine implements Comparable<VirtualMachine>{
     //builder for more transparent set up VirtualMachine attributes
     public static class Builder{
         private final UUID id;
-        private final String vmName;
+        private final String name;
         private final PhysicalMachine hostMachine;
         private Long countOfCPU = 0L;
         private Long countOfMonitors = 0L;
@@ -63,7 +63,7 @@ public final class VirtualMachine implements Comparable<VirtualMachine>{
                 throw new IllegalArgumentException("Virtual machine inicialization failure: "
                         + " Name of a virtual machine must not be null nor empty.");
             }else{
-                this.vmName = vmName;
+                this.name = vmName;
             }
             
             if(hostMachine == null){
@@ -126,7 +126,7 @@ public final class VirtualMachine implements Comparable<VirtualMachine>{
     
     private VirtualMachine(Builder builder){
         this.id = builder.id;
-        this.vmName = builder.vmName;
+        this.name = builder.name;
         this.hostMachine = builder.hostMachine;
         this.countOfCPU = builder.countOfCPU;
         this.countOfMonitors = builder.countOfMonitors;
@@ -143,8 +143,8 @@ public final class VirtualMachine implements Comparable<VirtualMachine>{
         return id;
     }
 
-    public String getVMName() {
-        return vmName;
+    public String getName() {
+        return name;
     }
 
     public PhysicalMachine getHostMachine() {
@@ -194,27 +194,27 @@ public final class VirtualMachine implements Comparable<VirtualMachine>{
         VirtualMachine vm = (VirtualMachine)obj;
         return ((this.id == vm.id) || 
                 (this.id != null && this.id.equals(vm.id))) &&
-               ((this.vmName == vm.vmName) ||
-                (this.vmName != null && this.vmName.equals(vm.vmName)));
+               ((this.name == vm.name) ||
+                (this.name != null && this.name.equals(vm.name)));
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 97 * hash + Objects.hashCode(this.id);
-        hash = 97 * hash + Objects.hashCode(this.vmName);
+        hash = 97 * hash + Objects.hashCode(this.name);
         return hash;
     }
     
     @Override
     public String toString(){
-        return "[" + "Virtual machine: id=" + this.id + ", name=" + this.vmName +
+        return "[" + "Virtual machine: id=" + this.id + ", name=" + this.name +
                ", host machine=" + this.hostMachine + "]";
     }
     
     @Override
     public int compareTo(VirtualMachine vm) {
         int result = this.id.compareTo(vm.id);
-        return (result == 0 ? this.vmName.compareTo(vm.vmName) : result);
+        return (result == 0 ? this.name.compareTo(vm.name) : result);
     }
 }

@@ -23,7 +23,7 @@ import java.util.Objects;
  * @author Tomáš Šmíd
  */
 public final class PortRule implements Comparable<PortRule>{
-    private final String ruleName;
+    private final String name;
     private final ProtocolType protocol;
     private final String hostIP;
     private final int hostPort;
@@ -31,7 +31,7 @@ public final class PortRule implements Comparable<PortRule>{
     private final int guestPort;
     
     public static class Builder {
-        private final String ruleName;
+        private final String name;
         private final int hostPort;
         private final int guestPort;
         private ProtocolType protocol = ProtocolType.TCP;
@@ -39,7 +39,7 @@ public final class PortRule implements Comparable<PortRule>{
         private String guestIP = "";        
         
         public Builder (String ruleName, int hostPort, int guestPort){
-            this.ruleName = ruleName;
+            this.name = ruleName;
             this.hostPort = hostPort;
             this.guestPort = guestPort;
         }
@@ -65,7 +65,7 @@ public final class PortRule implements Comparable<PortRule>{
     }
     
     private PortRule(Builder builder){
-        this.ruleName = builder.ruleName;
+        this.name = builder.name;
         this.protocol = builder.protocol;
         this.hostIP = builder.hostIP;
         this.hostPort = builder.hostPort;
@@ -73,8 +73,8 @@ public final class PortRule implements Comparable<PortRule>{
         this.guestPort = builder.guestPort;
     }
 
-    public String getRuleName() {
-        return ruleName;
+    public String getName() {
+        return name;
     }
 
     public ProtocolType getProtocol() {
@@ -102,15 +102,15 @@ public final class PortRule implements Comparable<PortRule>{
         if(obj == this) return true;
         if(!(obj instanceof PortRule)) return false;
         PortRule rule = (PortRule)obj;
-        return ((this.ruleName == rule.ruleName) || 
-                (this.ruleName != null && this.ruleName.equals(rule.ruleName))) &&
+        return ((this.name == rule.name) || 
+                (this.name != null && this.name.equals(rule.name))) &&
                (this.hostPort == rule.hostPort);
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 41 * hash + Objects.hashCode(this.ruleName);
+        hash = 41 * hash + Objects.hashCode(this.name);
         hash = 41 * hash + this.hostPort;
         return hash;
     }
@@ -119,14 +119,14 @@ public final class PortRule implements Comparable<PortRule>{
     public String toString(){
         String hip = hostIP.equals("") ? "\"\"" : hostIP;
         String gip = guestIP.equals("") ? "\"\"" : guestIP;
-        return "[" + "Port rule: name=" + ruleName + ", protocol=" + protocol.toString() +
+        return "[" + "Port rule: name=" + name + ", protocol=" + protocol.toString() +
                ", hostIP=" + hip + ", hostPort=" + hostPort + ", guestIP=" +
                gip + ", guestPort=" + guestPort + "]";
     }
     
     @Override
     public int compareTo(PortRule rule) {
-        int result = this.ruleName.compareTo(rule.ruleName);
+        int result = this.name.compareTo(rule.name);
         if(result == 0){
             if(this.hostPort < rule.hostPort) return -1;
             if(this.hostPort > rule.hostPort) return 1;

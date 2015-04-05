@@ -96,7 +96,7 @@ public class VirtualizationToolManagerImplTest {
     @Test
     public void findVMByNameWithValidConnectionAndExistingVM(){
         VirtualMachine expVM = new VMBuilder().build();
-        doReturn(expVM).when(natmanMocked).getVirtualMachineByName(expVM.getHostMachine(), expVM.getVMName());
+        doReturn(expVM).when(natmanMocked).getVirtualMachineByName(expVM.getHostMachine(), expVM.getName());
         
         VirtualMachine actVM = sut.findVirtualMachineByName("Fedora-21-WS");
         
@@ -107,7 +107,7 @@ public class VirtualizationToolManagerImplTest {
     @Test
     public void findVMByNameWithValidConnectionAndNotExistingVM(){
         VirtualMachine expVM = new VMBuilder().build();
-        doThrow(UnknownVirtualMachineException.class).when(natmanMocked).getVirtualMachineByName(expVM.getHostMachine(), expVM.getVMName());
+        doThrow(UnknownVirtualMachineException.class).when(natmanMocked).getVirtualMachineByName(expVM.getHostMachine(), expVM.getName());
         
         VirtualMachine actVM = sut.findVirtualMachineByName("Fedora-21-WS");
         
@@ -137,7 +137,7 @@ public class VirtualizationToolManagerImplTest {
     @Test
     public void findVMByNameWithInvalidConnection(){
         VirtualMachine expVM = new VMBuilder().build();
-        doThrow(ConnectionFailureException.class).when(natmanMocked).getVirtualMachineByName(expVM.getHostMachine(), expVM.getVMName());
+        doThrow(ConnectionFailureException.class).when(natmanMocked).getVirtualMachineByName(expVM.getHostMachine(), expVM.getName());
         
         VirtualMachine actVM = sut.findVirtualMachineByName("Fedora-21-WS");
         
@@ -258,7 +258,7 @@ public class VirtualizationToolManagerImplTest {
     public void cloneVMAsFullCopyWithValidConnectionAndExistingVM(){
         VirtualMachine origVM = new VMBuilder().build();
         VirtualMachine copyVM = new VMBuilder().id(UUID.fromString("78eea41d-0204-abae-a9b7-531c455570a1"))
-                                               .vmName(origVM.getVMName()+"_FCopy1").build();
+                                               .vmName(origVM.getName()+"_FCopy1").build();
         doReturn(copyVM).when(natmanMocked).createFullClone(origVM);
         
         VirtualMachine actCopyVM = sut.cloneVirtualMachine(origVM, CloneType.FULL);
@@ -301,7 +301,7 @@ public class VirtualizationToolManagerImplTest {
     public void cloneVMAsLinkedCopyWithValidConnectionAndExistingVM(){
         VirtualMachine origVM = new VMBuilder().build();
         VirtualMachine copyVM = new VMBuilder().id(UUID.fromString("78eea41d-0204-abae-a9b7-531c455570a1"))
-                                               .vmName(origVM.getVMName()+"_LCopy1").build();
+                                               .vmName(origVM.getName()+"_LCopy1").build();
         doReturn(copyVM).when(natmanMocked).createLinkedClone(origVM);
         
         VirtualMachine actCopyVM = sut.cloneVirtualMachine(origVM, CloneType.LINKED);
@@ -351,7 +351,7 @@ public class VirtualizationToolManagerImplTest {
     
     private void assertDeepVMsEquals(VirtualMachine expVM, VirtualMachine actVM){
         assertEquals("VMs should have same id",expVM.getId(),actVM.getId());
-        assertEquals("VMs should have same name",expVM.getVMName(),actVM.getVMName());
+        assertEquals("VMs should have same name",expVM.getName(),actVM.getName());
         assertEquals("VMs should have same host machine",expVM.getHostMachine(),actVM.getHostMachine());
         assertEquals("VMs should have same count of CPUs",expVM.getCountOfCPU(),actVM.getCountOfCPU());
         assertEquals("VMs should have same count of monitors",expVM.getCountOfMonitors(),actVM.getCountOfMonitors());
@@ -368,7 +368,7 @@ public class VirtualizationToolManagerImplTest {
         int res = o1.getId().compareTo(o2.getId());
         
         if(res == 0){
-            return (o1.getVMName().compareTo(o2.getVMName())); 
+            return (o1.getName().compareTo(o2.getName())); 
         }
         
         return res;

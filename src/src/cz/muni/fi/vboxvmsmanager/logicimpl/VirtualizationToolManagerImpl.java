@@ -17,6 +17,10 @@ package cz.muni.fi.vboxvmsmanager.logicimpl;
 
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.PhysicalMachine;
 import cz.muni.fi.vboxvmsmanager.pubapi.entities.VirtualMachine;
+import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.ConnectionFailureException;
+import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.IncompatibleVirtToolAPIVersionException;
+import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.UnexpectedVMStateException;
+import cz.muni.fi.vboxvmsmanager.pubapi.exceptions.UnknownVirtualMachineException;
 import cz.muni.fi.vboxvmsmanager.pubapi.managers.VirtualMachineManager;
 import cz.muni.fi.vboxvmsmanager.pubapi.managers.VirtualizationToolManager;
 import cz.muni.fi.vboxvmsmanager.pubapi.types.CloneType;
@@ -37,32 +41,104 @@ public class VirtualizationToolManagerImpl implements VirtualizationToolManager{
     
     @Override
     public VirtualMachine findVirtualMachineById(UUID id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NativeVBoxAPIManager natapiMan = NativeVBoxAPIManager.getInstance();
+        VirtualMachine virtualMachine = null;
+        
+        try{
+            virtualMachine = natapiMan.getVirtualMachineById(hostMachine, id);
+        } catch (InterruptedException | ConnectionFailureException | IncompatibleVirtToolAPIVersionException
+                | UnknownVirtualMachineException | UnexpectedVMStateException | IllegalArgumentException ex) {
+
+            System.err.println(ex.getMessage());
+        }
+
+        return virtualMachine;
     }
 
     @Override
     public VirtualMachine findVirtualMachineByName(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NativeVBoxAPIManager natapiMan = NativeVBoxAPIManager.getInstance();
+        VirtualMachine virtualMachine = null;
+        
+        try{
+            virtualMachine = natapiMan.getVirtualMachineByName(hostMachine, name);
+        } catch (InterruptedException | ConnectionFailureException | IncompatibleVirtToolAPIVersionException
+                | UnknownVirtualMachineException | UnexpectedVMStateException | IllegalArgumentException ex) {
+
+            System.err.println(ex.getMessage());
+        }
+        
+        return virtualMachine;
     }
 
     @Override
     public List<VirtualMachine> getVirtualMachines() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NativeVBoxAPIManager natapiMan = NativeVBoxAPIManager.getInstance();
+        List<VirtualMachine> virtualMachines = null;
+        
+        try{
+            virtualMachines = natapiMan.getVirtualMachines(hostMachine);
+        } catch (InterruptedException | ConnectionFailureException | IncompatibleVirtToolAPIVersionException
+                | UnexpectedVMStateException | IllegalArgumentException ex) {
+            System.err.println(ex.getMessage());
+        }
+        
+        return virtualMachines;
     }
 
     @Override
     public void removeVirtualMachine(VirtualMachine virtualMachine) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NativeVBoxAPIManager natapiMan = NativeVBoxAPIManager.getInstance();
+        boolean error = false;
+        
+        if(virtualMachine != null){
+            System.out.println("Removing virtual machine " + virtualMachine + " from physical machine " + hostMachine);
+            try{
+                natapiMan.removeVirtualMachine(virtualMachine);
+            } catch (InterruptedException | ConnectionFailureException | IncompatibleVirtToolAPIVersionException
+                    | UnknownVirtualMachineException | UnexpectedVMStateException | IllegalArgumentException ex) {
+                
+                System.err.println(ex.getMessage());
+                error = true;
+            }
+            
+            if(!error){
+                System.out.println("Removing finished successfully");
+            }
+        }else{
+            System.err.println("Removing virtual machine failure: There was made an attempt to remove a null virtual machine.");
+        }
     }
 
     @Override
     public VirtualMachine cloneVirtualMachine(VirtualMachine virtualMachine, CloneType type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NativeVBoxAPIManager natapiMan = NativeVBoxAPIManager.getInstance();
+        VirtualMachine cloneMachine = null;
+        boolean error = false;
+        
+        if(virtualMachine != null){
+            System.out.println("Cloning virtual machine " + virtualMachine + " on physical machine " + hostMachine);
+            try{
+                cloneMachine = natapiMan.createVMClone(virtualMachine, type);
+            } catch (InterruptedException | ConnectionFailureException | IncompatibleVirtToolAPIVersionException
+                    | UnknownVirtualMachineException | UnexpectedVMStateException | IllegalArgumentException ex) {
+                
+                System.err.println(ex.getMessage());
+                error = true;
+            }
+            
+            if(!error){
+                System.out.println("Cloning finished successfully");
+            }
+        }else{
+            System.err.println("Cloning virtual machine failure: There was made an attempt to clone a null virtual machine.");
+        }
+        
+        return cloneMachine;
     }
 
     @Override
     public VirtualMachineManager getVirtualMachineManager() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return VirtualMachineManagerImpl.getInstance();
     }
-    
 }

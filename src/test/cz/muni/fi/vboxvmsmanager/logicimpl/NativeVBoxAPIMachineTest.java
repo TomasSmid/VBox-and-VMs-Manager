@@ -220,7 +220,7 @@ public class NativeVBoxAPIMachineTest {
         sut.addPortRule(vm, pr);
         
         verify(vbmMocked).connect(url, user, pswd);
-        verify(natenMocked).addRedirect(pr.getRuleName(), NATProtocol.TCP, pr.getHostIP(),
+        verify(natenMocked).addRedirect(pr.getName(), NATProtocol.TCP, pr.getHostIP(),
                                         pr.getHostPort(), pr.getGuestIP(), pr.getGuestPort());        
     }
     
@@ -230,7 +230,7 @@ public class NativeVBoxAPIMachineTest {
         PortRule pr = new PortRule.Builder("Rule1",2222,22).build();
         PortRule pr2 = new PortRule.Builder("Rule1", 3333, 33).build();
         INATEngine natenMocked = mock(INATEngine.class);
-        doThrow(VBoxException.class).when(natenMocked).addRedirect(pr2.getRuleName(), NATProtocol.TCP, pr2.getHostIP(),
+        doThrow(VBoxException.class).when(natenMocked).addRedirect(pr2.getName(), NATProtocol.TCP, pr2.getHostIP(),
                                                                    pr2.getHostPort(), pr2.getGuestIP(), pr2.getGuestPort());
         
         sut.addPortRule(vm, pr);
@@ -245,7 +245,7 @@ public class NativeVBoxAPIMachineTest {
         PortRule pr = new PortRule.Builder("Rule1",2222,22).build();
         PortRule pr2 = new PortRule.Builder("Rule2", 2222, 33).build();
         INATEngine natenMocked = mock(INATEngine.class);
-        doThrow(VBoxException.class).when(natenMocked).addRedirect(pr2.getRuleName(), NATProtocol.TCP, pr2.getHostIP(),
+        doThrow(VBoxException.class).when(natenMocked).addRedirect(pr2.getName(), NATProtocol.TCP, pr2.getHostIP(),
                                                                    pr2.getHostPort(), pr2.getGuestIP(), pr2.getGuestPort());
         
         sut.addPortRule(vm, pr);
@@ -411,7 +411,7 @@ public class NativeVBoxAPIMachineTest {
         exception = ExpectedException.none();
         verify(vbmMocked, times(3)).connect(url, user, pswd);
         verify(vbmMocked, never()).getVBox();
-        verify(natenMocked, never()).addRedirect(pr.getRuleName(), NATProtocol.TCP, pr.getHostIP(),
+        verify(natenMocked, never()).addRedirect(pr.getName(), NATProtocol.TCP, pr.getHostIP(),
                                         pr.getHostPort(), pr.getGuestIP(), pr.getGuestPort());
     }
     
@@ -570,7 +570,7 @@ public class NativeVBoxAPIMachineTest {
     }
     
     private void assertDeepPREquals(PortRule expPR, PortRule actPR){
-        assertEquals("Port rules names should be same",expPR.getRuleName(),actPR.getRuleName());
+        assertEquals("Port rules names should be same",expPR.getName(),actPR.getName());
         assertEquals("Port rules protocols should be same",expPR.getProtocol(),actPR.getProtocol());
         assertEquals("Port rules host IPs should be same",expPR.getHostIP(),actPR.getHostIP());
         assertEquals("Port rules host ports should be same",expPR.getHostPort(),actPR.getHostPort());

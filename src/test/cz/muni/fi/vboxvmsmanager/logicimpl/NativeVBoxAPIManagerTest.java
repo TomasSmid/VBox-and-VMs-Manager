@@ -473,7 +473,7 @@ public class NativeVBoxAPIManagerTest {
     
     private void assertDeepVMsEquals(VirtualMachine expVM, VirtualMachine actVM){
         assertEquals("VMs should have same id",expVM.getId(),actVM.getId());
-        assertEquals("VMs should have same name",expVM.getVMName(),actVM.getVMName());
+        assertEquals("VMs should have same name",expVM.getName(),actVM.getName());
         assertEquals("VMs should have same host machine",expVM.getHostMachine(),actVM.getHostMachine());
         assertEquals("VMs should have same count of CPUs",expVM.getCountOfCPU(),actVM.getCountOfCPU());
         assertEquals("VMs should have same count of monitors",expVM.getCountOfMonitors(),actVM.getCountOfMonitors());
@@ -490,7 +490,7 @@ public class NativeVBoxAPIManagerTest {
         int res = o1.getId().compareTo(o2.getId());
         
         if(res == 0){
-            return (o1.getVMName().compareTo(o2.getVMName())); 
+            return (o1.getName().compareTo(o2.getName())); 
         }
         
         return res;
