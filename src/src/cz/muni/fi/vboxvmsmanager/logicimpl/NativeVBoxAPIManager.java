@@ -35,6 +35,7 @@ import org.virtualbox_4_3.IMedium;
 import org.virtualbox_4_3.IProgress;
 import org.virtualbox_4_3.ISession;
 import org.virtualbox_4_3.ISnapshot;
+import org.virtualbox_4_3.ISystemProperties;
 import org.virtualbox_4_3.IVirtualBox;
 import org.virtualbox_4_3.LockType;
 import org.virtualbox_4_3.MachineState;
@@ -52,6 +53,46 @@ final class NativeVBoxAPIManager {
     
     public static NativeVBoxAPIManager getInstance(){
         return INSTANCE;
+    }
+    
+    public void registerVirtualMachine(PhysicalMachine physicalMachine, String name) throws InterruptedException,
+            ConnectionFailureException, IncompatibleVirtToolAPIVersionException, UnknownVirtualMachineException{
+        
+        String errMsgForPMNullCheck = "Registering virtual machine failure: There was made an attempt to register new virtual machine on a null physical machine.";
+        String errMsgForVMNameCheck = "Registering virtual machine failure: Virtual machine cannot be registered, because it has a null or an empty name.";
+        String errMsgForNotConnectedPM = "Connection failure while trying to register virtual machine \"" + name + "\": There cannot be registered any virtual machine on physical machine " + physicalMachine + ", because this physical machine is not connected.";
+        String errMsgForPMConError = "Connection failure while trying to register virtual machine \"" + name + "\" on physical machine " + physicalMachine + ": ";
+        String errMsgForUnknownVM = "Registering virtual machine failure: There is no virtual machine folder named \"" + name + "\" with configuration file \"" + name + ".vbox\" in VirtualBox default machine folder \"VirtualBox VMs\".";
+        boolean vmIsRegistered = true;
+        NativeVBoxAPIConnection natapiCon = NativeVBoxAPIConnection.getInstance();
+        
+        checkPMIsNotNull(physicalMachine, errMsgForPMNullCheck);
+        checkVMNameIsNotNullNorEmpty(name, errMsgForVMNameCheck);
+        
+        VirtualBoxManager vbm = natapiCon.getVirtualBoxManager(physicalMachine, errMsgForPMConError);
+        IVirtualBox vbox = vbm.getVBox();
+        ISystemProperties sp = vbox.getSystemProperties();
+        IMachine unregMachine = null;
+        try{
+            unregMachine = vbox.findMachine(name);
+        }catch(VBoxException ex){
+            vmIsRegistered = false;
+        }
+        
+        if(!vmIsRegistered){
+            try{
+                unregMachine = vbox.openMachine(sp.getDefaultMachineFolder() + "\\" + name + "\\" + name + ".vbox");
+            }catch(VBoxException ex){
+                vbm.disconnect();
+                vbm.cleanup();
+                throw new UnknownVirtualMachineException(errMsgForUnknownVM);
+            }
+            
+            vbox.registerMachine(unregMachine);
+        }
+        
+        vbm.disconnect();
+        vbm.cleanup();
     }
     
     public VirtualMachine getVirtualMachineById(PhysicalMachine physicalMachine, UUID id) throws InterruptedException,

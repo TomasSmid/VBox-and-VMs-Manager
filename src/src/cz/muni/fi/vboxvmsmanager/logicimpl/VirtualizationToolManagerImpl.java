@@ -40,6 +40,32 @@ public class VirtualizationToolManagerImpl implements VirtualizationToolManager{
     }
     
     @Override
+    public void registerVirtualMachine(String name) {
+        NativeVBoxAPIManager natapiMan = NativeVBoxAPIManager.getInstance();
+        boolean error = false;
+        
+        if(name != null && !name.isEmpty()){
+            System.out.println("Registering virtual machine \"" + name + "\"");
+            try{
+                natapiMan.registerVirtualMachine(hostMachine, name);
+            } catch (InterruptedException | ConnectionFailureException | IncompatibleVirtToolAPIVersionException
+                    | UnknownVirtualMachineException | IllegalArgumentException ex) {
+                
+                System.err.println(ex.getMessage());
+                error = true;
+            }
+            
+            if(!error){
+                System.out.println("Registration finished successfully");
+            }
+            
+        }else{
+            System.err.println("Registering virtual machine failure: Virtual machine cannot be registered, because it has a null or an empty name.");
+        }
+        
+    }
+    
+    @Override
     public VirtualMachine findVirtualMachineById(UUID id) {
         NativeVBoxAPIManager natapiMan = NativeVBoxAPIManager.getInstance();
         VirtualMachine virtualMachine = null;
@@ -141,4 +167,5 @@ public class VirtualizationToolManagerImpl implements VirtualizationToolManager{
     public VirtualMachineManager getVirtualMachineManager() {
         return VirtualMachineManagerImpl.getInstance();
     }
+    
 }

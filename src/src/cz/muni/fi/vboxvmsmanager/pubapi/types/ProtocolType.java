@@ -20,5 +20,6 @@ package cz.muni.fi.vboxvmsmanager.pubapi.types;
  * @author Tomáš Šmíd
  */
 public enum ProtocolType {
-    TCP, UDP
+    TCP,
+    UDP
 }

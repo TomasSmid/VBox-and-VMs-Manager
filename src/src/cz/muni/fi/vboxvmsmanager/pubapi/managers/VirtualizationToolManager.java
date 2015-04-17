@@ -26,6 +26,8 @@ import java.util.UUID;
  */
 public interface VirtualizationToolManager {
     
+    public void registerVirtualMachine(String name);
+    
     public VirtualMachine findVirtualMachineById(UUID id);
     
     public VirtualMachine findVirtualMachineByName(String name);

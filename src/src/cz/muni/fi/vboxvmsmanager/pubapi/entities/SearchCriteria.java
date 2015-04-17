@@ -32,7 +32,7 @@ public final class SearchCriteria {
     private Long sizeOfRAM;
     private Long sizeOfVRAM;
     private String typeOfOS;
-    private String versionOfOS;
+    private String identifierOfOS;
     
     public static class Builder {
         private UUID vmId = null;
@@ -45,7 +45,7 @@ public final class SearchCriteria {
         private Long sizeOfRAM = null;
         private Long sizeOfVRAM = null;
         private String typeOfOS = null;
-        private String versionOfOS = null;
+        private String identifierOfOS = null;
         
         public Builder id(UUID value){
             vmId = value;
@@ -92,8 +92,8 @@ public final class SearchCriteria {
             return this;
         }
         
-        public Builder versionOfOS(String value){
-            versionOfOS = value;
+        public Builder identifierOfOS(String value){
+            identifierOfOS = value;
             return this;
         }
         
@@ -113,7 +113,7 @@ public final class SearchCriteria {
         this.sizeOfRAM = builder.sizeOfRAM;
         this.sizeOfVRAM = builder.sizeOfVRAM;
         this.typeOfOS = builder.typeOfOS;
-        this.versionOfOS = builder.versionOfOS;
+        this.identifierOfOS = builder.identifierOfOS;
     }
 
     public UUID getVmId() {
@@ -196,12 +196,12 @@ public final class SearchCriteria {
         this.typeOfOS = typeOfOS;
     }
 
-    public String getVersionOfOS() {
-        return versionOfOS;
+    public String getIdentifierOfOS() {
+        return identifierOfOS;
     }
 
-    public void setVersionOfOS(String versionOfOS) {
-        this.versionOfOS = versionOfOS;
+    public void setIdentifierOfOS(String versionOfOS) {
+        this.identifierOfOS = versionOfOS;
     }
     
 }

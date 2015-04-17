@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cz.muni.fi.vboxvmsmanager.pubapi.managers;
-
-import cz.muni.fi.vboxvmsmanager.pubapi.entities.SearchCriteria;
-import cz.muni.fi.vboxvmsmanager.pubapi.entities.VirtualMachine;
-import cz.muni.fi.vboxvmsmanager.pubapi.types.SearchCriterionType;
-import cz.muni.fi.vboxvmsmanager.pubapi.types.SearchMode;
-import java.util.List;
+package cz.muni.fi.vboxvmsmanager.pubapi.types;
 
 /**
  *
  * @author Tomáš Šmíd
  */
-public interface SearchManager {
-    
-    public List<VirtualMachine> search(SearchCriteria searchCriteria, SearchMode mode,
-                                       List<SearchCriterionType> searchOrder);
+public enum SearchMode {
+    PRECISE,
+    TOLERANT
 }

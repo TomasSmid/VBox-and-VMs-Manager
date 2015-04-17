@@ -38,6 +38,7 @@ import org.virtualbox_4_3.IVirtualBox;
 import org.virtualbox_4_3.LockType;
 import org.virtualbox_4_3.MachineState;
 import org.virtualbox_4_3.NATProtocol;
+import org.virtualbox_4_3.NetworkAttachmentType;
 import org.virtualbox_4_3.SessionState;
 import org.virtualbox_4_3.VBoxException;
 import org.virtualbox_4_3.VirtualBoxManager;
@@ -201,6 +202,7 @@ class NativeVBoxAPIMachine {
         String errMsgForNotConnectedPM = "Connection failure while trying to create a new port forwarding rule for virtual machine " + virtualMachine + " on physical machine " + virtualMachine.getHostMachine() + ": There cannot be created any new port forwarding rule for this virtual machine on this physical machine now, because it is not connected.";
         String errMsgForPMConError = "Connection failure while trying to create new port forwarding rule for virtual machine " + virtualMachine + " on physical machine " + virtualMachine.getHostMachine() + ": ";
         String errMsgForUnknownVM = "Craeting new port forwarding rule failure: There is no virtual machine " + virtualMachine + " on physical machine " + virtualMachine.getHostMachine() + " known to VirtualBox.";
+        String errMsgForAdapterCheck = "Creating new port forwarding rule failure: There cannot be created any port forwarding rule for virtual machine " + virtualMachine + ", because its network adapter is not attached to NAT.";
         NativeVBoxAPIConnection natapiCon = NativeVBoxAPIConnection.getInstance();
         
         checkVMIsNotNull(virtualMachine, errMsgForVMNullCheck);
@@ -229,6 +231,9 @@ class NativeVBoxAPIMachine {
         }
         
         INetworkAdapter adapter = vboxMachine.getNetworkAdapter(0L);
+        if(adapter.getAttachmentType() != NetworkAttachmentType.NAT){
+            throw new UnexpectedVMStateException(errMsgForAdapterCheck);
+        }
         INATEngine natEngine = adapter.getNATEngine();
         NATProtocol natp = (portRule.getProtocol() == ProtocolType.TCP ? NATProtocol.TCP : NATProtocol.UDP);
         String hostIP = (portRule.getHostIP() == null ? "" : portRule.getHostIP());
